@@ -108,7 +108,6 @@ class ContinuousHMM:
             self.A /= self.A.sum(axis=1, keepdims=True)
             self.pi = np.random.rand(self.num_states)
             self.pi /= self.pi.sum()
-            # Initialize mu with distinct observations to break symmetry
             indices = np.random.choice(self.seq_len, self.num_states, replace=False)
             self.mu = obs[indices].astype(float)
 
@@ -117,9 +116,7 @@ class ContinuousHMM:
             self.sigma = np.array([global_sigma.copy() for _ in range(self.num_states)])
 
         for iter in range(num_iter):
-
             B = self.compute_emissions(obs)
-
             alpha, total_prob = self.forward(B)
             beta = self.backward(B)
             gamma, xi = self.compute_expected_counts(B, alpha, beta, total_prob)
